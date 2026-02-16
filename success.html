@@ -21,7 +21,7 @@ async function checkAuth(){
   const token=sessionStorage.getItem("authToken");
 
   if(!token){
-    window.location.href="login.html";
+    window.location.href="index.html";
     return;
   }
 
@@ -37,13 +37,13 @@ async function checkAuth(){
 
   if(!data.valid){
     sessionStorage.removeItem("authToken");
-    window.location.href="login.html";
+    window.location.href="index.html";
   }
 }
 
 function logout(){
   sessionStorage.removeItem("authToken");
-  window.location.href="login.html";
+  window.location.href="index.html";
 }
 
 checkAuth();
