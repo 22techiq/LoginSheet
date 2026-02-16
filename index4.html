@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Login</title>
+<style>
+body{
+  font-family:Arial;
+  background:#f4f6f9;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  height:100vh;
+  margin:0;
+}
+.box{
+  background:white;
+  padding:30px;
+  width:350px;
+  border-radius:8px;
+  box-shadow:0 10px 25px rgba(0,0,0,0.1);
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+}
+input,button{
+  width:100%;
+  padding:10px;
+  margin:8px 0;
+  border-radius:5px;
+  border:1px solid #ccc;
+  font-size:14px;
+  box-sizing:border-box;
+}
+button{
+  background:#1a73e8;
+  color:white;
+  border:none;
+  cursor:pointer;
+  transition:0.3s;
+}
+button:hover{
+  background:#1666c1;
+}
+a{
+  font-size:14px;
+  text-decoration:none;
+  color:#1a73e8;
+}
+a:hover{
+  text-decoration:underline;
+}
+.msg{
+  color:red;
+  font-size:14px;
+  min-height:20px;
+  display:flex;
+  align-items:center;
+  gap:6px;
+}
+/* Spinner animation */
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+.spinner {
+  width:16px;
+  height:16px;
+  border:3px solid #f3f3f3;
+  border-top:3px solid #1a73e8;
+  border-radius:50%;
+  animation:spin 1s linear infinite;
+  display:inline-block;
+  vertical-align:middle;
+}
+</style>
+</head>
+<body>
+
+<div class="box">
+<h2>Login</h2>
+
+<input type="email" id="email" placeholder="Email" required>
+<input type="password" id="password" placeholder="Password" required>
+
+<button onclick="login()">Login</button>
+
+<div class="msg" id="msg"></div>
+
+<a href="forgot.html">Forgot Password?</a><br>
+<a href="register.html">Create Account</a>
+</div>
+
+<script>
+const API = "https://script.google.com/macros/s/AKfycbxAVz1fgbNvB0MG6dCMPnpZ1QXOqZr_CzV_uaSzS3GWHTyXs8T644B2H93UaJ9xYgK3/exec";
+
+async function login(){
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value.trim();
+  const msgEl = document.getElementById("msg");
+
+  if(!email || !password){
+    msgEl.innerText = "Fill all fields.";
+    return;
+  }
+
+  // Show progress spinner
+  msgEl.innerHTML = '<span class="spinner"></span> Logging in...';
+
+  try {
+    const res = await fetch(API,{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({
+        action:"login",
+        email:email,
+        password:password,
+        ip:"",
+        userAgent:navigator.userAgent
+      })
+    });
+
+    const data = await res.json();
+
+    // ---------- Display proper message based on backend ----------
+    if(data.success){
+      // login successful
+      sessionStorage.setItem("authToken", data.token);
+      window.location.href="success.html";
+    } else {
+      // show backend message if available
+      if(data.message){
+        msgEl.innerText = data.message;
+      } else {
+        msgEl.innerText = "Invalid email or password.";
+      }
+    }
+
+  } catch(err){
+    msgEl.innerText = "Error connecting. Try again.";
+  }
+}
+</script>
+
+</body>
+</html>
