@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Dashboard</title>
+<style>
+body{font-family:Arial;background:#eef2f7;text-align:center;padding-top:100px;}
+button{padding:10px 20px;background:#ea4335;color:white;border:none;border-radius:5px;}
+</style>
+</head>
+<body>
+
+<h1>Welcome to Secure Dashboard</h1>
+<button onclick="logout()">Logout</button>
+
+<script>
+const API="https://script.google.com/macros/s/AKfycbyt8HoDUYZkGKDZ7VdjcGhKbCwK_VzQLycP3I6cZDT0s0BrAEaijl3e6CnWpnC-81-L/exec";
+
+async function checkAuth(){
+
+  const token=sessionStorage.getItem("authToken");
+
+  if(!token){
+    window.location.href="login.html";
+    return;
+  }
+
+  const res=await fetch(API,{
+    method:"POST",
+    body:JSON.stringify({
+      action:"verifySession",
+      token:token
+    })
+  });
+
+  const data=await res.json();
+
+  if(!data.valid){
+    sessionStorage.removeItem("authToken");
+    window.location.href="login.html";
+  }
+}
+
+function logout(){
+  sessionStorage.removeItem("authToken");
+  window.location.href="login.html";
+}
+
+checkAuth();
+</script>
+
+</body>
+</html>
