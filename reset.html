@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>New Password</title>
+</head>
+<body>
+
+<h2>Set New Password</h2>
+
+<input type="password" id="newPass" placeholder="New Password">
+<button onclick="resetPass()">Reset Password</button>
+
+<p id="msg"></p>
+
+<script>
+const API="https://script.google.com/macros/s/AKfycbyt8HoDUYZkGKDZ7VdjcGhKbCwK_VzQLycP3I6cZDT0s0BrAEaijl3e6CnWpnC-81-L/exec";
+
+const params=new URLSearchParams(window.location.search);
+const token=params.get("token");
+
+if(!token){
+  document.body.innerHTML="Invalid reset link.";
+}
+
+async function resetPass(){
+
+  const pass=document.getElementById("newPass").value.trim();
+
+  if(pass.length<6){
+    document.getElementById("msg").innerText="Weak password.";
+    return;
+  }
+
+  const res=await fetch(API,{
+    method:"POST",
+    body:JSON.stringify({
+      action:"resetPassword",
+      token:token,
+      password:pass
+    })
+  });
+
+  const data=await res.json();
+
+  if(data.status==="success"){
+    alert("Password updated.");
+    window.location.href="login.html";
+  }else{
+    document.getElementById("msg").innerText="Invalid or expired link.";
+  }
+}
+</script>
+
+</body>
+</html>
